@@ -1,0 +1,44 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<head>
+    <title>ToDo lists</title>
+</head>
+<body>
+
+<h2>Add ToDo list</h2>
+<form th:object="${list}" method="POST" action="/add-list">
+    <table>
+        <tr>
+            <td><label>Name:</label></td>
+            <td><input type="text" th:field="*{name}"/></td>
+        </tr>
+    </table>
+
+    <input type="submit" value="add">
+</form>
+
+<h2>To do:</h2>
+<ul th:each="list : ${lists}">
+    <li>
+        <span th:text="${list.getName()}"></span>
+        <form th:object="${list}" method="POST" th:action="@{remove-list(id=${list.getId()})}">
+            <input type="submit" value="remove">
+        </form>
+        <h3>Add task</h3>
+        <form th:object="${task}" method="POST" th:action="@{add-task(listId=${list.getId()})}">
+            <label>Description:</label>
+            <input type="text" th:field="*{description}"/>
+            <input type="submit" value="add">
+        </form>
+    </li>
+    <h3>Tasks:</h3>
+    <ul th:each="task : ${list.getTasks()}">
+        <span th:text="${task.getDescription()} " th:style="${task.isCompleted() ? 'color:green' : ''}"></span>
+        <form method="POST" th:action="@{update-task(id=${task.getId()}, completed=${!task.isCompleted()})}">
+            <input type="submit" th:value="${task.isCompleted() ? 'revert task' : 'complete task'}">
+        </form>
+    </ul>
+</ul>
+
+</body>
+</html>
